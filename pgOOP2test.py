@@ -166,7 +166,7 @@ class ball:
 
                 # After collision:
                 # Using conservation of momentum and energy
-                (v1c,v2c) = ((v1c * (self.mass - jhlksdjhflksajdhflksajd otherball.mass) + 2 * v2c * otherball.mass * ball.elasticity) / (self.mass + otherball.mass), (v2c * (otherball.mass - self.mass) + 2 * v1c * self.mass * ball.elasticity) / (self.mass + otherball.mass))
+                (v1c,v2c) = ((v1c * (self.mass -  otherball.mass) + 2 * v2c * otherball.mass * ball.elasticity) / (self.mass + otherball.mass), (v2c * (otherball.mass - self.mass) + 2 * v1c * self.mass * ball.elasticity) / (self.mass + otherball.mass))
 
                 # Legacy Collision swap (no accounting for mass differences)
                 # (v1c,v2c) = (v2c,v1c)
