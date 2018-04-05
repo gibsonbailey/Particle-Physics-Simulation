@@ -6,22 +6,23 @@ import time
 import os
 
 # Pygame Window
-screenwidth = 3800
-screenheight = 1200
+screenwidth = 1350
+screenheight = 750
 
 
-screen = pygame.display.set_mode((screenwidth,screenheight),pygame.RESIZABLE)
+screen = pygame.display.set_mode((screenwidth,screenheight),pygame.FULLSCREEN)
 print(pygame.display.list_modes())
 
 # Ball Attributes
+BALL_RADIAL_INITIAL_VELOCITY = True
 BALLQUANTITY = 35
 BALLMINRADIUS = 5
 BALLMAXRADIUS = 20
-BALLMAXVELOCTY = 8
+BALLMAXVELOCTY = 100
 INITALBALLSPREAD = 70
 
 # Time Attributes
-TIMESPEED = 3
+TIMESPEED = 1.5
 
 # Uniform Gravity Field
 acc_g = 0.2
@@ -32,16 +33,17 @@ G_CENTER_X = screenwidth / 2
 G_CENTER_Y = screenheight / 2
 G_MAGNITUDE = 700
 
+
+
 # For large Central Particle
 STAR_PARTICLE = True
-DRAG_COEFFICIENT = 2
+DRAG_COEFFICIENT = 4
 
 # Boundary Reflections
 BOUNDS = False
 
 # Collisions
-PARTICLE_COLLISIONS = True
-
+PARTICLE_COLLISIONS = False
 
 
 BLACK = (0,0,0)
@@ -63,8 +65,22 @@ class ball:
 
         self.x = x
         self.y = y
-        self.v_x = random.uniform(-BALLMAXVELOCTY,BALLMAXVELOCTY)
-        self.v_y = random.uniform(-BALLMAXVELOCTY,BALLMAXVELOCTY)
+        if BALL_RADIAL_INITIAL_VELOCITY:
+            self.dx = self.x - G_CENTER_X
+            self.dy = self.y - G_CENTER_Y
+            self.angle_p = math.atan2(-self.dy,-self.dx)
+            
+            # For small noise in the start angle (for elliptical orbits)
+            self.angle_dev = random.uniform(-0.5,0.5)
+            self.angle_p += self.angle_dev
+
+            self.speed = random.uniform(-BALLMAXVELOCTY,BALLMAXVELOCTY)
+
+            self.v_x = self.speed * math.cos(self.angle_p - (math.pi/2))
+            self.v_y = self.speed * math.sin(self.angle_p - (math.pi/2))
+        else:
+            self.v_x = random.uniform(-BALLMAXVELOCTY,BALLMAXVELOCTY)
+            self.v_y = random.uniform(-BALLMAXVELOCTY,BALLMAXVELOCTY)
 
         if G_NONUNIFORM == False:
             self.a_x = 0.0
