@@ -5,7 +5,7 @@ import math
 import time
 import os
 
-# Pygame Window
+###### Pygame Window ######
 screenwidth = 1350
 screenheight = 750
 
@@ -13,42 +13,64 @@ screenheight = 750
 screen = pygame.display.set_mode((screenwidth,screenheight),pygame.FULLSCREEN)
 print(pygame.display.list_modes())
 
-# Ball Attributes
-BALL_RADIAL_INITIAL_VELOCITY = True
+
+###### Ball Attributes ######
+# Spawns balls with mostly tangential velocity for semi-circular orbits
+BALL_TANGENTIAL_INITIAL_VELOCITY = True
+
+# Number of balls initially spawned
 BALLQUANTITY = 35
+
+# Parameters for ball size
 BALLMINRADIUS = 5
 BALLMAXRADIUS = 20
+
+# Initial ball speed parameters
 BALLMAXVELOCTY = 100
+
+# Controls how spread out the balls will spawn
 INITALBALLSPREAD = 70
 
-# Time Attributes
+
+
+###### Time Attributes ######
+# Controls the time scale at which the simulation operates
 TIMESPEED = 1.5
 
-# Uniform Gravity Field
+
+
+###### Gravity Field Controls ######
+# Uniform Gravity Field or Centralized Gravity Field
+G_NONUNIFORM = True
+
+# Acceleration due to gravity (Uniform Gravity Field)
 acc_g = 0.2
 
 # Nonuniform Gravity Field
-G_NONUNIFORM = True
 G_CENTER_X = screenwidth / 2
 G_CENTER_Y = screenheight / 2
 G_MAGNITUDE = 700
 
-
-
-# For large Central Particle
+# For large central particle (Star)
 STAR_PARTICLE = True
 DRAG_COEFFICIENT = 4
 
-# Boundary Reflections
+
+
+###### Collisions ######
+# Particle collisions with the walls of the pygame window
 BOUNDS = False
 
-# Collisions
+# Collisions between particles themselves
 PARTICLE_COLLISIONS = False
 
 
+###### Colors ######
 BLACK = (0,0,0)
 
 
+
+#Primary particle of the simulation
 class ball:
 
     # Buffer between screen edges and balls
@@ -58,22 +80,26 @@ class ball:
     # Collision dampening (less elasticity is more dampening)
     elasticity = 0.9
 
+    # Constructor
     def __init__(self,x,y,r):
         self.radius = r
         self.color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
-        self.mass = self.radius * self.radius
+        self.mass = self.radius * self.radius # scales with area of the ball
 
+        # center position of ball on screen
         self.x = x
         self.y = y
-        if BALL_RADIAL_INITIAL_VELOCITY:
+
+        if BALL_TANGENTIAL_INITIAL_VELOCITY:
             self.dx = self.x - G_CENTER_X
             self.dy = self.y - G_CENTER_Y
             self.angle_p = math.atan2(-self.dy,-self.dx)
-            
+
             # For small noise in the start angle (for elliptical orbits)
             self.angle_dev = random.uniform(-0.5,0.5)
             self.angle_p += self.angle_dev
 
+            # Initial velocity magnitude
             self.speed = random.uniform(-BALLMAXVELOCTY,BALLMAXVELOCTY)
 
             self.v_x = self.speed * math.cos(self.angle_p - (math.pi/2))
@@ -96,6 +122,7 @@ class ball:
             self.a_y = self.acc_g * math.sin(self.theta_ball + math.pi)
 
 
+    # Updates the position of the ball
     def move(self, deltaT):
         deltaT *= TIMESPEED / 1000
         if BOUNDS:
@@ -133,16 +160,20 @@ class ball:
             elif self.y <= 0 + self.radius + ball.y_padding:
                 self.y <= 0 + self.radius + ball.y_padding
 
+
+    # Checks for collision with another ball (other ball passed as parameter)
+    # Updates both ball velocities if collision condition is actually met
     def collision(self,otherball):
         dx = otherball.x - self.x
         dy = otherball.y - self.y
         dist = math.hypot(dx,dy)
 
+        # Checks if the ball areas are overlapping
         if dist <= self.radius + otherball.radius:
             d_vx = otherball.v_x - self.v_x
             d_vy = otherball.v_y - self.v_y
 
-            # Change in distance / time
+            # Change in ball center distances / time
             # If balls are converging, then collide
             dD_dt = (dx * d_vx + dy * d_vy) / dist
             if dD_dt < 0:
@@ -181,7 +212,7 @@ class ball:
                 # print("v2t:", v2t)
 
                 # After collision:
-                # Using conservation of momentum and energy
+                # Using conservation of translational momentum and translational energy
                 (v1c,v2c) = ((v1c * (self.mass -  otherball.mass) + 2 * v2c * otherball.mass * ball.elasticity) / (self.mass + otherball.mass), (v2c * (otherball.mass - self.mass) + 2 * v1c * self.mass * ball.elasticity) / (self.mass + otherball.mass))
 
                 # Legacy Collision swap (no accounting for mass differences)
@@ -220,22 +251,13 @@ class ball:
                 # print("v2t:", v2t)
                 # print('\n\n')
 
-                # buff = ((v1c + v2c)/60)
-                # buff = 1.001
-                # factor = 2
-
-                # FIXES STICKY PROBLEM
-                # self.x = x_ave - math.cos(col_ang) * self.radius * buff
-                # self.y = y_ave - math.sin(col_ang) * self.radius * buff
-                # otherball.x = x_ave + math.cos(col_ang) * otherball.radius * buff
-                # otherball.y = y_ave + math.sin(col_ang) * otherball.radius * buff
-
-
+    # Updates the ball circle to the screen about to be printed
     def draw(self):
         pygame.draw.circle(screen, self.color, (int(self.x),int(self.y)), int(self.radius))
-        # time.sleep(1)
 
 
+
+# Game Sequence
 class Control(object):
     def __init__(self):
         self.screen = pygame.display.get_surface()
@@ -285,9 +307,12 @@ class Control(object):
             self.clock.tick(90)
             pygame.display.update()
 
+
+    # Actual Simulation
     def game(self):
         balls = []
 
+        # Generates all balls and initializes them
         for i in range(BALLQUANTITY):
             if STAR_PARTICLE:
                 balls.append(ball(random.uniform(screenwidth * (0.4  - (INITALBALLSPREAD / 200)),screenwidth * (0.4 + (INITALBALLSPREAD / 200))),random.uniform(screenheight * (0.5 - (INITALBALLSPREAD / 200)),screenheight * (0.5 + (INITALBALLSPREAD / 200))),random.uniform(BALLMINRADIUS,BALLMAXRADIUS)))
@@ -295,22 +320,24 @@ class Control(object):
                 balls.append(ball(random.uniform(0,screenwidth),random.uniform(0,screenheight),random.uniform(BALLMINRADIUS,BALLMAXRADIUS)))
 
         # Delta time implementation
+        # For the same experience on different machines (fast or slow frame rates)
         dt = 1
 
+        # For exiting the game loop
         done = False
 
-        #KEYS
+        # Keys pressed
         CTRL = False
 
-        #event loop
+        # Event loop
         while done == False:
             for event in pygame.event.get():
 
-                # Clicking X exit functionality
+                # Clicking X on the window (exit functionality)
                 if event.type == pygame.QUIT:
                     done = True
 
-                # CMD-W exit functionality
+                # CMD-W (exit functionality)
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LMETA or event.key == pygame.K_RMETA:
                         CTRL = True
@@ -320,8 +347,10 @@ class Control(object):
                     if event.key == pygame.K_LMETA or event.key == pygame.K_RMETA:
                         CTRL = False
 
+            # Background
             screen.fill(BLACK)
-            # checkcounter = 0
+
+            # Collision checking
             for i in range(BALLQUANTITY):
                 balls[i].move(dt)
                 if PARTICLE_COLLISIONS:
@@ -329,9 +358,13 @@ class Control(object):
                         balls[i].collision(otherball)
                         # checkcounter += 1
 
+
             if not STAR_PARTICLE:
                 for i in range(BALLQUANTITY):
                     balls[i].draw()
+
+            # Prints balls traveling in the negative x-direction first
+            # For pseudo 3D effect
             else:
                 sorted_particles = sorted(balls, key=lambda ball: ball.v_x)
                 i = 0
@@ -345,15 +378,19 @@ class Control(object):
                 # Draw Star Particle
                 pygame.draw.circle(screen, (94,255,238), (int(G_CENTER_X),int(G_CENTER_Y)), 50)
 
+                # Draw the particles traveling in the positive x-direction last
                 for x in range(BALLQUANTITY - i):
                     sorted_particles[i].draw()
                     i += 1
 
+            # Update dt for Delta Time
             dt = self.clock.tick(60)
             pygame.display.update()
 
-            # print("Checks:", checkcounter)
 
+
+
+# Runs entire sequence of game
 def main():
     pygame.init()
     pygame.display.set_mode((screenwidth,screenheight))
@@ -366,6 +403,6 @@ def main():
 
 
 
-
+# Runs main() if the this file is being run directly (not imported to another program)
 if __name__ == "__main__":
     main()
