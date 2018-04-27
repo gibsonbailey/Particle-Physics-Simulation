@@ -11,6 +11,7 @@ The most difficult issue, unrelated to familiarizing myself with the Python lang
 2. The center position (x,y)
 \
 \
+  
 Two conditions must be met for an actual **collision** to occur.
 1. The balls must be overlapping.
 2. The distance between the two balls must be decreasing.
