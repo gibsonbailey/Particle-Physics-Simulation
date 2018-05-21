@@ -8,7 +8,6 @@ The most difficult issue, unrelated to familiarizing myself with the Python lang
 <br/>
 <br/>
 ### Firstly
-###  Elegant Solution
 There is an obvious condition that must be met in order for a collision to occur: two balls must be overlapping. To define this condition, we need a couple bits of information about each ball.
 1. The radius
 2. The center position (x,y)
@@ -28,6 +27,7 @@ The next time that the simulation loop moves the balls a distance corresponding 
 <br/>
 <br/>
 ###  Elegant Solution
+<br/>
 Two conditions must be met for an actual **collision** to occur.
 1. The balls must be overlapping.
 2. The distance between the two balls must be decreasing.
