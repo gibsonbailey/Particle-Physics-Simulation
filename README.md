@@ -13,7 +13,7 @@ There is an obvious condition that must be met in order for a collision to occur
 2. The center position (x,y)
 <br/>
 The ball class is built to store each of these fields, so we have easy access to them. We can use the center positions of each ball to calculate the distance between the two of them. The general distance formula for two dimensions is shown below.
-![2-D distance formula](https://github.com/gibsonbailey/Particle-Physics-Simulation/distance_formula.svg)
+![2-D distance formula](https://raw.githubusercontent.com/gibsonbailey/Particle-Physics-Simulation/master/distance_formula.svg)
 <br/>
 <br/>
 Two conditions must be met for an actual **collision** to occur.
