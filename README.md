@@ -14,9 +14,8 @@ There is an obvious condition that must be met in order for a collision to occur
 <br/>
 The ball class is built to store each of these fields, so we have easy access to them. We can use the center positions of each ball to calculate the distance between the two of them. The general distance formula for two dimensions is shown below.
 <br/>
-
+<br/>
 <img src="distance_formula.png" width="25%">
-
 <br/>
 <br/>
 Two conditions must be met for an actual **collision** to occur.
