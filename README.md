@@ -7,6 +7,7 @@ I've used some basic mechanics to implement a small simulator for 2D circle elas
 The most difficult issue, unrelated to familiarizing myself with the Python language, was producing collisions that did not cause glitchy  effects. I'll explain an example of a hacky, unrefined solution that I first implemented, and then I'll show a more elegant solution. 
 <br/>
 <br/>
+
 ### Firstly
 There is an obvious condition that must be met in order for a collision to occur: two balls must be overlapping. To define this condition, we need a couple bits of information about each ball.
 1. The radius
@@ -24,8 +25,11 @@ Inside the ball class is an elasticity value that determines the portion of mome
 <br/>
 <br/>
 The next time that the simulation loop moves the balls a distance corresponding to one time step, the distance between the two centers will increase. However, since each of the velocities were decreased slighly by the lack of elasticity, it is not unlikely that the balls will still be overlapping, which causes the collision function to be called again. This is what I refer to as the "sticky ball" problem, and it completely ruins the effect of bouncing balls.
+
+### Hacky Solution
 <br/>
 <br/>
+
 ###  Elegant Solution
 <br/>
 Two conditions must be met for an actual **collision** to occur.
