@@ -27,6 +27,13 @@ Inside the ball class is an elasticity value that determines the portion of mome
 The next time that the simulation loop moves the balls a distance corresponding to one time step, the distance between the two centers will increase. However, since each of the velocities were decreased slighly by the lack of elasticity, it is not unlikely that the balls will still be overlapping, which causes the collision function to be called again. This is what I refer to as the "sticky ball" problem, and it completely ruins the effect of bouncing balls.
 
 ### Hacky Solution
+One solution to this problem is to respawn each ball's position just a bit outside of each other's reach after a collision occurs. This solution is somewhat effective in that it solves the "sticky ball" problem. However, there is a side-effect to this prescription. Each time a collison occurs, balls begin to appear to skip away from each other.
+<br/>
+<br/>
+Additionally, when more than one ball engages in an exchange, balls are often spawned into one another even further, causing a non-physical effect.
+<br/>
+<br/>
+The severity of both of these problems increases when computing speed is low and when ball velocities are high.
 <br/>
 <br/>
 
