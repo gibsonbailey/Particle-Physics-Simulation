@@ -38,8 +38,8 @@ The severity of both of these problems increases when computing speed is low and
 <br/>
 
 ###  Elegant Solution
-<br/>
 Two conditions must be met for an actual **collision** to occur.
+
 1. The balls must be overlapping.
 2. The distance between the two balls must be decreasing.
 
