@@ -37,7 +37,6 @@ Two conditions must be met for an actual **collision** to occur.
 2. The distance between the two balls must be decreasing.
 
 ## Dependencies
-* NumPy
 * PyGame
 
 ## Author:
